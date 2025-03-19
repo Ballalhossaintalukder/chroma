@@ -8015,6 +8015,7 @@ dependencies = [
  "arrow",
  "async-trait",
  "bytes",
+ "chroma-config",
  "chroma-error",
  "chroma-storage",
  "futures",
