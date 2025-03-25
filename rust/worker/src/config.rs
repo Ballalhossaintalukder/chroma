@@ -135,7 +135,7 @@ impl QueryServiceConfig {
     }
 
     fn default_otel_endpoint() -> String {
-        "http://otel-collector:4317".to_string()
+        "".to_string()  // Default to empty string to skip OpenTelemetry if not configured
     }
 
     fn default_my_member_id() -> String {
@@ -196,7 +196,7 @@ impl CompactionServiceConfig {
     }
 
     fn default_otel_endpoint() -> String {
-        "http://otel-collector:4317".to_string()
+        "".to_string()  // Default to empty string to skip OpenTelemetry if not configured
     }
 
     fn default_my_member_id() -> String {

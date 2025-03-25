@@ -48,6 +48,11 @@ pub fn init_otel_layer(
     service_name: &String,
     otel_endpoint: &String,
 ) -> Box<dyn Layer<Registry> + Send + Sync> {
+    // If the endpoint is empty, this shouldn't be called
+    if otel_endpoint.is_empty() {
+        panic!("init_otel_layer called with empty otel_endpoint. This is a bug.");
+    }
+
     tracing::info!(
         "Registering jaeger subscriber for {} at endpoint {}",
         service_name,
@@ -161,11 +166,23 @@ pub fn init_panic_tracing_hook() {
 }
 
 pub fn init_otel_tracing(service_name: &String, otel_endpoint: &String) {
-    let layers = vec![
-        init_global_filter_layer(),
-        init_otel_layer(service_name, otel_endpoint),
-        init_stdout_layer(),
-    ];
+    let mut layers = vec![];
+
+    layers.push(init_global_filter_layer());
+
+    // Only initialize OpenTelemetry if endpoint is configured
+    if !otel_endpoint.is_empty() {
+        tracing::info!(
+            "Initializing OpenTelemetry with endpoint: {}",
+            otel_endpoint
+        );
+        layers.push(init_otel_layer(service_name, otel_endpoint));
+    } else {
+        tracing::info!("OpenTelemetry endpoint not configured, skipping telemetry initialization");
+    }
+
+    layers.push(init_stdout_layer());
+
     init_tracing(layers);
     init_panic_tracing_hook();
 }
