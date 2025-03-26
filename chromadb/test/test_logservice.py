@@ -46,6 +46,7 @@ def verify_records(
     start_offset = 1
     for batch_records in test_records_map.values():
         test_func(**batch_records)
+        print(f"pulling {collection} {collection.id}");
         pushed_records = logservice.pull_logs(collection.id, start_offset, 100)
         assert len(pushed_records) == len(batch_records["ids"])
         for i, record in enumerate(pushed_records):
@@ -93,6 +94,7 @@ def test_add(client):  # type: ignore
     }
 
     collection = client.create_collection("testadd")
+    print('collection_id', collection.id)
     verify_records(logservice, collection, test_records_map, collection.add, 0)
 
 
